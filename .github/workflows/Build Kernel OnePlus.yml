@@ -766,6 +766,12 @@ jobs:
             cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
           fi
 
+          # OnePlus custom kernel uses 2-arg getname_flags; fix SUSFS patch to avoid fs/open.c compile error
+          if [ "${{ github.event.inputs.SUSFS_META }}" != "-1" ]; then
+            sed -i 's/getname_flags(filename, lookup_flags, NULL)/getname_flags(filename, lookup_flags)/' ./common/50_add_susfs_in_gki-${{ env.KANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch
+            echo "Patched SUSFS getname_flags signature for OnePlus kernel"
+          fi
+
           if [[ "${{ github.event.inputs.ZRAM }}" == 1* ]]; then
             echo "正在拉取zram补丁"
             cp -r ../SukiSU_patch/other/zram/lz4k/include/linux/* ./common/include/linux/
